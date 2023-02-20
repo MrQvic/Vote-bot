@@ -1,5 +1,5 @@
 # Vote-bot
-Auto voting bot on sites with recaptcha, in this case czechcraft.cz and craftlist.org
+Auto voting script with recaptcha bypass, made for sites https://craftlist.org and https://czech-craft.eu/
 
 USAGE:
 Add your username and nopeCHA key into config file
