@@ -1,4 +1,4 @@
-# Vote-bot
+# Vote-bot -- currently unsuported
 Auto voting script with recaptcha bypass, made for sites https://craftlist.org and https://czech-craft.eu/
 
 USAGE:
