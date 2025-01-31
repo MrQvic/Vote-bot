@@ -41,9 +41,10 @@ def already_voted_craftlist(sb) -> bool:
         #    return True
         #log("Craftlis - Why am I here?")
         #log(vote_button.text)
-        return True
+        log("Vote on CraftList is available.")
+        return False
     except:
-        log("Canot vote on CraftList.")
+        log("Cannot vote on CraftList.")
         return True
     
 def click_recaptcha_checkbox(sb):
@@ -103,6 +104,7 @@ def wait_for_recaptcha(sb, timeout=60) -> bool:
     return False
 
 def vote_craftlist(sb) -> bool:
+    log("Voting on CraftList...")
     sb.open(f"https://craftlist.org/goldskyblock?nickname={nick}")
     try:
         if not already_voted_craftlist(sb):
@@ -123,6 +125,7 @@ def vote_craftlist(sb) -> bool:
     
 def vote_minecraft_list(sb) -> bool:
     try:
+        log("Voting on Minecraft List...")
         sb.open(f"https://www.minecraft-list.cz/server/goldskyblock-y5hf/vote?name={nick}")
         if wait_for_recaptcha(sb, timeout=90):
             log("Proceeding with vote on Minecraft List...")
@@ -134,6 +137,7 @@ def vote_minecraft_list(sb) -> bool:
         log(f"Minecraft list - Error: {str(e)}")
 
 def vote_minecraftservery(sb) -> bool:
+    log("Voting on MinecraftServery...")
     sb.open(f"https://minecraftservery.eu/server/goldskyblock-1171/vote/{nick}")
     try:
         sb.click("button:contains('Odeslat hlas')")
