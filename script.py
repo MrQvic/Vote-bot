@@ -141,6 +141,8 @@ def vote_minecraftservery(sb) -> bool:
     sb.open(f"https://minecraftservery.eu/server/goldskyblock-1171/vote/{nick}")
     try:
         sb.click("button:contains('Odeslat hlas')")
+        #popup = sb.find_element("//div[contains(@class,'notification')]")
+        #log(popup.text)
         log("Successfully voted on MinecraftServery!")
         return True
     except Exception as e:
