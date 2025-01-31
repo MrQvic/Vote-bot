@@ -34,7 +34,7 @@ def click_cookie_button(sb):
 def already_voted_craftlist(sb) -> bool:
     try:
         log("Checking if already voted on CraftList.")
-        vote_button = sb.find_element("button:contains('Hlasovat')")
+        vote_button = sb.find_element("button:contains('Hlasovat')", timeout=4)
         #vote_button = sb.wait_for_element('//*[@id="voteModal"]/div/div/div[3]/a/span/span[1]', timeout=10)
         #if( "Další možný hlas za" in vote_button.text):
         #    log("Already voted on CraftList.")
@@ -104,7 +104,7 @@ def wait_for_recaptcha(sb, timeout=60) -> bool:
     return False
 
 def vote_craftlist(sb) -> bool:
-    log("Voting on CraftList...")
+    log("Entering CraftList...")
     sb.open(f"https://craftlist.org/goldskyblock?nickname={nick}")
     try:
         if not already_voted_craftlist(sb):
@@ -112,12 +112,13 @@ def vote_craftlist(sb) -> bool:
             if wait_for_recaptcha(sb, timeout=90):
                 log("Proceeding with vote...")
                 sb.click("button:contains('Hlasovat')")
-                log("Successfully voted on CraftList!")
-                return True
+                log("Vote on CraftList probably successful")
+                return False
             else:
                 log("Failed to solve reCAPTCHA")
                 return False
         else:
+            log("Already voted on CraftList.")
             return True
     except Exception as e:
         log(f"Craftlist - Error: {str(e)}")
@@ -131,20 +132,34 @@ def vote_minecraft_list(sb) -> bool:
             log("Proceeding with vote on Minecraft List...")
             sb.click("#tosgdpr")
             sb.click("button:contains('Odeslat')")
+            sb.sleep(50)
             log("Successfully voted on Minecraft List!")
             return True
     except Exception as e:
         log(f"Minecraft list - Error: {str(e)}")
 
 def vote_minecraftservery(sb) -> bool:
-    log("Voting on MinecraftServery...")
+    log("Entering MinecraftServery...")
     sb.open(f"https://minecraftservery.eu/server/goldskyblock-1171/vote/{nick}")
     try:
+        sb.sleep(5)
         sb.click("button:contains('Odeslat hlas')")
-        #popup = sb.find_element("//div[contains(@class,'notification')]")
-        #log(popup.text) -> "Pole captcha je povinné" / "Hlasovat můžete až v 24:00" / ???
-        log("Successfully voted on MinecraftServery!")
-        return True
+        try:
+            popup = sb.find_element("//div[contains(@class,'notification')]", timeout=2)
+            log(popup.text) #-> "Pole captcha je povinné" / "Hlasovat můžete až v 24:00" / ???
+            if "Hlasovat můžete až v" in popup.text:
+                log("Already voted on MinecraftServery.")
+                return True
+            elif "Pole captcha je povinné" in popup.text:
+                log("Captcha bypass unsucessful.")
+                return False
+            else:
+                log("Unknown error popup.")
+                
+                return False
+        except Exception as e:
+            log("MinecrafServery - No popup found - probably successful vote.")
+            return False
     except Exception as e:
         log("Could not find or click the 'Odeslat hlas' button")
         log(e)
@@ -157,32 +172,47 @@ while True:
             sb.open(extension_settings)
             sb.open("https://nopecha.com/setup#84o3kj1819c12tcw")
 
+            pokusy = 0
+
             # Vote on MinecraftServery
-            try:
-                if vote_minecraftservery(sb):
-                    pass
-                else:
-                    log("Failed to vote on MinecraftServery.")
-            except Exception as e:
-                log(f"MinecraftServery - Error: {str(e)}")
+            while pokusy <= 3:
+                try:
+                    pokusy += 1
+                    log("MinecraftServery - Attempt " + str(pokusy))
+                    MCvoted = vote_minecraftservery(sb)
+                    if MCvoted:
+                        break
+                    elif not MCvoted and pokusy == 3:
+                        log("Failed to vote on MinecraftServery.")
+                except Exception as e:
+                    log(f"MinecraftServery - Error: {str(e)}")
 
-            # Vote on CraftList
-            try:
-                if vote_craftlist(sb):
-                    pass
-                else:
-                    log("Failed to vote on CraftList.")
-            except Exception as e:
-                log(f"CraftList - Error: {str(e)}")
-
+            pokusy = 0
+#
+            while pokusy <= 3:
+                try:
+                    pokusy += 1
+                    log("CraftList - Attempt " + str(pokusy))
+                    Cvoted = vote_craftlist(sb) 
+                    if Cvoted:
+                        break
+                    elif not Cvoted and pokusy == 3:
+                        log("Failed to vote on CraftList.")
+                except Exception as e:
+                    log(f"CraftList - Error: {str(e)}")
+#
+            pokusy =0
             # Vote on Minecraft List
-            try:
-                if vote_minecraft_list(sb):
-                    pass
-                else:
-                    log("Failed to vote on Minecraft List.")
-            except Exception as e:
-                log(f"Minecraft List - Error: {str(e)}")
+            while pokusy < 3:
+                try:
+                    pokusy += 1
+                    log("Minecraft list - Attempt " + str(pokusy))
+                    if vote_minecraft_list(sb):
+                        break
+                    else:
+                        log("Failed to vote on Minecraft List.")
+                except Exception as e:
+                    log(f"Minecraft List - Error: {str(e)}")
 
     except Exception as e:
         log(f"Main loop Error: {str(e)}")
