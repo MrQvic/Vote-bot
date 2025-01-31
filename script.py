@@ -10,9 +10,6 @@ config.read("config.ini")
 nick = config["DEFAULT"]["nick"]
 nopecha_key = config["DEFAULT"]["nopecha_key"]
 
-nick = "MrKvic_"
-nopecha_key = "sqxcr2k8r3fo0uz0"
-
 # Základní konfigurace
 options = {
     "uc": True,
