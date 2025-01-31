@@ -142,7 +142,7 @@ def vote_minecraftservery(sb) -> bool:
     try:
         sb.click("button:contains('Odeslat hlas')")
         #popup = sb.find_element("//div[contains(@class,'notification')]")
-        #log(popup.text)
+        #log(popup.text) -> "Pole captcha je povinné" / "Hlasovat můžete až v 24:00" / ???
         log("Successfully voted on MinecraftServery!")
         return True
     except Exception as e:
