@@ -132,17 +132,26 @@ def vote_minecraft_list(sb) -> bool:
             log("Proceeding with vote on Minecraft List...")
             sb.click("#tosgdpr")
             sb.click("button:contains('Odeslat')")
-            sb.sleep(50)
-            log("Successfully voted on Minecraft List!")
-            return True
+            #sb.sleep(50)
+            alert = sb.wait_for_element('//*[@id="about"]/div/div[1]/div', timeout=10)
+            if "Tvůj hlas bude zpracován" in alert.text:
+                log("Successfully voted on Minecraft List!")
+                return True
+            elif "Již si hlasoval. Znovu můžeš hlasovat" in alert.text:
+                log("Already voted on Minecraft List!")
+                return True
+            else:
+                log("Unknown alert message. How did we get here?")
+                return False
     except Exception as e:
         log(f"Minecraft list - Error: {str(e)}")
+        return False
 
 def vote_minecraftservery(sb) -> bool:
     log("Entering MinecraftServery...")
     sb.open(f"https://minecraftservery.eu/server/goldskyblock-1171/vote/{nick}")
     try:
-        sb.sleep(5)
+        sb.sleep(7)
         sb.click("button:contains('Odeslat hlas')")
         try:
             popup = sb.find_element("//div[contains(@class,'notification')]", timeout=2)
@@ -170,11 +179,10 @@ while True:
         with SB(**options) as sb:
             sb.activate_cdp_mode()
             sb.open(extension_settings)
-            sb.open("https://nopecha.com/setup#84o3kj1819c12tcw")
 
             pokusy = 0
-
-            # Vote on MinecraftServery
+#
+            ## Vote on MinecraftServery
             while pokusy <= 3:
                 try:
                     pokusy += 1
@@ -186,9 +194,10 @@ while True:
                         log("Failed to vote on MinecraftServery.")
                 except Exception as e:
                     log(f"MinecraftServery - Error: {str(e)}")
-
-            pokusy = 0
 #
+            pokusy = 0
+##
+            # Vote on CraftList
             while pokusy <= 3:
                 try:
                     pokusy += 1
@@ -207,9 +216,10 @@ while True:
                 try:
                     pokusy += 1
                     log("Minecraft list - Attempt " + str(pokusy))
-                    if vote_minecraft_list(sb):
+                    MLvoted = vote_minecraft_list(sb)
+                    if MLvoted:
                         break
-                    else:
+                    elif not MLvoted and pokusy == 3:
                         log("Failed to vote on Minecraft List.")
                 except Exception as e:
                     log(f"Minecraft List - Error: {str(e)}")
@@ -218,4 +228,14 @@ while True:
         log(f"Main loop Error: {str(e)}")
 
     print("Sleeping for 2 hours...")
-    time.sleep(random.uniform(7500, 8000))
+    time.sleep(7200)
+    #time.sleep(random.uniform(7500, 8000))
+
+
+#//*[@id="about"]/div/div[1]/div
+#
+#<div class="alert alert-success" role="alert">
+#            Tvůj hlas bude zpracován
+#        </div>
+
+
