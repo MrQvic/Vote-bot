@@ -3,6 +3,7 @@ import configparser
 import time
 import os
 import random
+import subprocess
 
 # Načtení konfigurace
 config = configparser.ConfigParser()
@@ -149,9 +150,10 @@ def vote_minecraft_list(sb) -> bool:
 
 def vote_minecraftservery(sb) -> bool:
     log("Entering MinecraftServery...")
-    sb.open(f"https://minecraftservery.eu/server/goldskyblock-1171/vote/{nick}")
+    sb.uc_open_with_reconnect(f"https://minecraftservery.eu/server/goldskyblock-1171/vote/{nick}")
     try:
         sb.sleep(7)
+        #sb.uc_gui_click_captcha()
         sb.click("button:contains('Odeslat hlas')")
         try:
             popup = sb.find_element("//div[contains(@class,'notification')]", timeout=2)
@@ -176,25 +178,31 @@ def vote_minecraftservery(sb) -> bool:
 
 while True:
     try:
+        # Start MinecraftServery
+        try:
+            subprocess.run(["python", "minecraftservery.py"])
+        except Exception as e:
+            log(f"Error voting on MinecraftServery: {str(e)}")
+
         with SB(**options) as sb:
             sb.activate_cdp_mode()
             sb.open(extension_settings)
 
-            pokusy = 0
-#
-            ## Vote on MinecraftServery
-            while pokusy <= 3:
-                try:
-                    pokusy += 1
-                    log("MinecraftServery - Attempt " + str(pokusy))
-                    MCvoted = vote_minecraftservery(sb)
-                    if MCvoted:
-                        break
-                    elif not MCvoted and pokusy == 3:
-                        log("Failed to vote on MinecraftServery.")
-                except Exception as e:
-                    log(f"MinecraftServery - Error: {str(e)}")
-#
+            #pokusy = 4
+##
+            ### Vote on MinecraftServery
+            #while pokusy <= 3:
+            #    try:
+            #        pokusy += 1
+            #        log("MinecraftServery - Attempt " + str(pokusy))
+            #        MCvoted = vote_minecraftservery(sb)
+            #        if MCvoted:
+            #            break
+            #        elif not MCvoted and pokusy == 3:
+            #            log("Failed to vote on MinecraftServery.")
+            #    except Exception as e:
+            #        log(f"MinecraftServery - Error: {str(e)}")
+##
             pokusy = 0
 ##
             # Vote on CraftList
