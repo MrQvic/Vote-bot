@@ -178,30 +178,30 @@ def vote_minecraftservery(sb) -> bool:
 
 while True:
     try:
-        # Start MinecraftServery
-        try:
-            subprocess.run(["python", "minecraftservery.py"])
-        except Exception as e:
-            log(f"Error voting on MinecraftServery: {str(e)}")
+        ## Start MinecraftServery
+        #try:
+        #    subprocess.run(["python", "minecraftservery.py"])
+        #except Exception as e:
+        #    log(f"Error voting on MinecraftServery: {str(e)}")
 
         with SB(**options) as sb:
             sb.activate_cdp_mode()
             sb.open(extension_settings)
 
-            #pokusy = 4
+            pokusy = 0
 ##
-            ### Vote on MinecraftServery
-            #while pokusy <= 3:
-            #    try:
-            #        pokusy += 1
-            #        log("MinecraftServery - Attempt " + str(pokusy))
-            #        MCvoted = vote_minecraftservery(sb)
-            #        if MCvoted:
-            #            break
-            #        elif not MCvoted and pokusy == 3:
-            #            log("Failed to vote on MinecraftServery.")
-            #    except Exception as e:
-            #        log(f"MinecraftServery - Error: {str(e)}")
+            ## Vote on MinecraftServery
+            while pokusy <= 3:
+                try:
+                    pokusy += 1
+                    log("MinecraftServery - Attempt " + str(pokusy))
+                    MCvoted = vote_minecraftservery(sb)
+                    if MCvoted:
+                        break
+                    elif not MCvoted and pokusy == 3:
+                        log("Failed to vote on MinecraftServery.")
+                except Exception as e:
+                    log(f"MinecraftServery - Error: {str(e)}")
 ##
             pokusy = 0
 ##
