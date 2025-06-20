@@ -1,2 +1,4 @@
 config.ini
 /downloaded_files
+/.venv
+/src/__pycache__
